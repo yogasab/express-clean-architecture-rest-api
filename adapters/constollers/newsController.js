@@ -9,6 +9,7 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 			const news = await findAllNews(dbRepository);
 			responseFormatter(res, 200, "success", "News fetched successfully", news);
 		} catch (error) {
+			console.log(error);
 			responseFormatter(res, 500, "error", error.message, null);
 		}
 	};

@@ -1,4 +1,5 @@
 const { News } = require("../models/news");
+const { Tags } = require("../models/tags");
 
 function newsRepositoryMongoDB() {
 	const findAll = () => {

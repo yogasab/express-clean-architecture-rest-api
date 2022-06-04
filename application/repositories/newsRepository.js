@@ -1,8 +1,8 @@
 function newsRepository(repository) {
-	const findAll = () => repository.findAllNews();
+	const findAllNews = () => repository.findAll();
 
 	return {
-		findAll,
+		findAllNews,
 	};
 }
 

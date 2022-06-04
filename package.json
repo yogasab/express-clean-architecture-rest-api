@@ -1,5 +1,5 @@
 {
-	"name": "test-be-sejuta-cita",
+	"name": "test-be-bareksa",
 	"version": "1.0.0",
 	"description": "",
 	"main": "app.js",
@@ -12,12 +12,16 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@godaddy/terminus": "^4.10.2",
 		"axios": "^0.27.2",
 		"bcrypt": "^5.0.1",
+		"body-parser": "^1.20.0",
 		"chai": "^4.3.6",
 		"chai-http": "^4.3.0",
+		"compression": "^1.7.4",
 		"dotenv": "^16.0.0",
 		"express": "^4.18.1",
+		"helmet": "^5.1.0",
 		"ioredis": "^5.0.5",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.3.3",

@@ -1,34 +1,42 @@
 const express = require("express");
-const morgan = require("morgan");
-const { connectDB } = require("./app/config/db");
+const mongoose = require("mongoose");
+const config = require("./config/config");
+// const Redis = require("ioredis");
+const { expressConfig } = require("./frameworks/webserver/express");
+const { routes } = require("./frameworks/webserver/routes");
+const { serverConfig } = require("./frameworks/webserver/server");
+const { connection } = require("./frameworks/database/mongoDB/connection");
+// const { redisConnection } = require("./frameworks/database/redis/connection");
+
 const app = express();
-const routes = require("./app/routes");
-const PORT = process.env.PORT || 5000;
 
-connectDB();
+const server = require("http").createServer(app);
 
-app.use(morgan("dev"));
-app.use(express.json({ limit: "10kb" }));
+// server configuration and start
+serverConfig(app, mongoose, server, config).startServer();
 
-routes.init(app);
+// DB configuration and connection create
+connection(mongoose, config, {
+	autoIndex: false,
+	useCreateIndex: true,
+	useNewUrlParser: true,
+	autoReconnect: true,
+	reconnectTries: Number.MAX_VALUE,
+	reconnectInterval: 10000,
+	keepAlive: 120,
+	connectTimeoutMS: 1000,
+}).connectToMongoose();
 
-app.get("/", (req, res) => {
-	res.status(200).json({
-		code: 200,
-		status: "200",
-		message: "Technical Test BE Sejuta Cita",
-	});
-});
+// / express.js configuration (middlewares etc.)
+expressConfig(app);
 
-app.all("*", (req, res, next) => {
-	res.status(404).json({
-		status: "Failed",
-		message: `The routes for ${req.originalUrl} is not found`,
-	});
-});
+// const redisClient = redisConnection(Redis).createRedisClient();
 
-app.listen(PORT, () => {
-	console.log("Server runnging on localhost:5000");
-});
+// routes for each endpoint
+routes(app, express);
 
-module.exports = app;
+// error handling middleware
+// app.use(errorHandlingMiddleware);
+
+// Expose app
+module.exports = { app };
