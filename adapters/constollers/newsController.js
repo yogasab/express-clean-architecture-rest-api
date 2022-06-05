@@ -7,6 +7,9 @@ const {
 	deleteNewsByID,
 } = require("../../application/use_cases/news/deleteNewsByID");
 const { responseFormatter } = require("../formatter/responseFormatter");
+const {
+	updateNewsByID,
+} = require("../../application/use_cases/news/updateNewsByID");
 
 function newsController(newsDBRepository, newsDBRepositoryImpl) {
 	const dbRepository = newsDBRepository(newsDBRepositoryImpl());
@@ -65,7 +68,31 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 			}
 			responseFormatter(res, 200, "success", "News deleted successfully", null);
 		} catch (error) {
-			console.error(error);
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
+	const updateNewsById = async (req, res) => {
+		const { title, body, author, status, tags } = req.body;
+		const { id } = req.params;
+		try {
+			const updatedNews = await updateNewsByID({
+				id,
+				title,
+				body,
+				author,
+				tags,
+				status,
+				newsRepository: dbRepository,
+			});
+			responseFormatter(
+				res,
+				200,
+				"success",
+				"News updated successfully",
+				updatedNews
+			);
+		} catch (error) {
 			responseFormatter(res, 500, "error", error.message, null);
 		}
 	};
@@ -75,6 +102,7 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 		getNewsByID,
 		storeNews,
 		removeNewsByID,
+		updateNewsById,
 	};
 }
 

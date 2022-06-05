@@ -1,3 +1,4 @@
+const { news } = require("../../../../src/entities/news");
 const { News } = require("../models/news");
 const { Tags } = require("../models/tags");
 
@@ -59,11 +60,70 @@ function newsRepositoryMongoDB() {
 		return await News.findByIdAndDelete(id);
 	};
 
+	const updateByID = async (id, newsEntity) => {
+		const updatedNews = {
+			title: newsEntity.getTitle(),
+			body: newsEntity.getBody(),
+			author: newsEntity.getAuthor(),
+			tags: newsEntity.getTags(),
+			status: newsEntity.getStatus(),
+		};
+
+		const news = await News.findById(id);
+		if (newsEntity.getTags().length === 0) {
+			news.tags.forEach(async (tag) => {
+				const tagID = tag._id.toString();
+				await Tags.findByIdAndUpdate(
+					tagID,
+					{
+						$pull: { news: id },
+					},
+					{
+						new: true,
+						useFindAndModify: false,
+					}
+				);
+			});
+			return await News.findByIdAndUpdate(id, updatedNews, { new: true });
+		}
+
+		news.tags.forEach(async (tag) => {
+			const tagID = tag._id.toString();
+			await Tags.findByIdAndUpdate(
+				tagID,
+				{
+					$pull: { news: id },
+				},
+				{
+					new: true,
+					useFindAndModify: false,
+				}
+			);
+		});
+
+		newsEntity.getTags().forEach(async (tag) => {
+			const tagID = tag;
+			await Tags.findByIdAndUpdate(
+				tagID,
+				{
+					$push: { news: id },
+				},
+				{
+					new: true,
+					useFindAndModify: false,
+				}
+			);
+		});
+
+		return await News.findByIdAndUpdate(id, updatedNews, { new: true });
+	};
+
 	return {
 		findAll,
 		findByID,
 		add,
 		deleteByID,
+		updateByID,
 	};
 }
 
