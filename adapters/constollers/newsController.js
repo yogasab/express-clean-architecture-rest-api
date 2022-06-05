@@ -2,6 +2,7 @@ const { findAllNews } = require("../../application/use_cases/news/findAllNews");
 const {
 	findNewsByID,
 } = require("../../application/use_cases/news/findNewsByID");
+const { addNews } = require("../../application/use_cases/news/addNews");
 const { responseFormatter } = require("../formatter/responseFormatter");
 
 function newsController(newsDBRepository, newsDBRepositoryImpl) {
@@ -29,9 +30,33 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 		}
 	};
 
+	const storeNews = async (req, res) => {
+		const { title, body, author, status, tags } = req.body;
+		try {
+			const newNews = await addNews({
+				title,
+				body,
+				author,
+				tags,
+				status,
+				newsRepository: dbRepository,
+			});
+			responseFormatter(
+				res,
+				201,
+				"success",
+				"News created successfully",
+				newNews
+			);
+		} catch (error) {
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
 	return {
 		getAllNews,
 		getNewsByID,
+		storeNews,
 	};
 }
 

@@ -13,7 +13,7 @@ function newsRouter(express) {
 
 	const controller = newsController(newsRepository, newsRepositoryMongoDB);
 
-	newsRouter.route("/").get(controller.getAllNews);
+	newsRouter.route("/").get(controller.getAllNews).post(controller.storeNews);
 	newsRouter.route("/:id").get(controller.getNewsByID);
 
 	return newsRouter;
