@@ -26,6 +26,7 @@ function newsRepositoryMongoDB() {
 
 		const newNews = await data.save();
 
+		// Add news id on tags
 		if (newNews.tags.length > 0) {
 			newNews.tags.forEach(async (tag) => {
 				const tagID = tag;
@@ -42,10 +43,27 @@ function newsRepositoryMongoDB() {
 		return newNews;
 	};
 
+	const deleteByID = async (id) => {
+		const news = await News.findById(id);
+
+		// Delete news id on tags
+		if (news.tags.length > 0) {
+			news.tags.forEach(async (tag) => {
+				const tagID = tag;
+				await Tags.findOneAndUpdate(tagID, {
+					$pull: { news: news._id },
+				});
+			});
+		}
+
+		return await News.findByIdAndDelete(id);
+	};
+
 	return {
 		findAll,
 		findByID,
 		add,
+		deleteByID,
 	};
 }
 

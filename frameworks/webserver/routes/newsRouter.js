@@ -14,7 +14,7 @@ function newsRouter(express) {
 	const controller = newsController(newsRepository, newsRepositoryMongoDB);
 
 	newsRouter.route("/").get(controller.getAllNews).post(controller.storeNews);
-	newsRouter.route("/:id").get(controller.getNewsByID);
+	newsRouter.route("/:id").get(controller.getNewsByID).delete(controller.removeNewsByID);
 
 	return newsRouter;
 }
