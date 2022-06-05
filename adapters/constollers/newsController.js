@@ -10,12 +10,30 @@ const { responseFormatter } = require("../formatter/responseFormatter");
 const {
 	updateNewsByID,
 } = require("../../application/use_cases/news/updateNewsByID");
+const {
+	findNewsByStatus,
+} = require("../../application/use_cases/news/findNewsByStatus");
 
 function newsController(newsDBRepository, newsDBRepositoryImpl) {
 	const dbRepository = newsDBRepository(newsDBRepositoryImpl());
 
 	const getAllNews = async (req, res) => {
+		const { status, tag } = req.query;
 		try {
+			if (status) {
+				const news = await findNewsByStatus(status, dbRepository);
+				if (news.length === 0) {
+					responseFormatter(res, 404, "failed", "News not found", null);
+				}
+				
+				responseFormatter(
+					res,
+					200,
+					"success",
+					"News by status fetched successfully",
+					news
+				);
+			}
 			const news = await findAllNews(dbRepository);
 			responseFormatter(res, 200, "success", "News fetched successfully", news);
 		} catch (error) {

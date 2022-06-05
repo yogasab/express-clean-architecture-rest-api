@@ -1,4 +1,3 @@
-const { news } = require("../../../../src/entities/news");
 const { News } = require("../models/news");
 const { Tags } = require("../models/tags");
 
@@ -70,22 +69,6 @@ function newsRepositoryMongoDB() {
 		};
 
 		const news = await News.findById(id);
-		if (newsEntity.getTags().length === 0) {
-			news.tags.forEach(async (tag) => {
-				const tagID = tag._id.toString();
-				await Tags.findByIdAndUpdate(
-					tagID,
-					{
-						$pull: { news: id },
-					},
-					{
-						new: true,
-						useFindAndModify: false,
-					}
-				);
-			});
-			return await News.findByIdAndUpdate(id, updatedNews, { new: true });
-		}
 
 		news.tags.forEach(async (tag) => {
 			const tagID = tag._id.toString();
@@ -118,12 +101,17 @@ function newsRepositoryMongoDB() {
 		return await News.findByIdAndUpdate(id, updatedNews, { new: true });
 	};
 
+	const findByStatus = (status) => {
+		return News.find({ status });
+	};
+
 	return {
 		findAll,
 		findByID,
 		add,
 		deleteByID,
 		updateByID,
+		findByStatus,
 	};
 }
 
