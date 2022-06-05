@@ -8,8 +8,16 @@ function newsRepositoryMongoDB() {
 			.select("-__v");
 	};
 
+	const findByID = (id) => {
+		const news = News.findById(id)
+			.populate({ path: "tags", select: "name slug" })
+			.select("-__v");
+		return news;
+	};
+
 	return {
 		findAll,
+		findByID,
 	};
 }
 
