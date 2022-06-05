@@ -102,7 +102,19 @@ function newsRepositoryMongoDB() {
 	};
 
 	const findByStatus = (status) => {
-		return News.find({ status });
+		return News.find({ status }).populate({
+			path: "tags",
+			select: "name createdAt slug",
+		});
+	};
+
+	const findByTag = async (tag) => {
+		const news = await Tags.find({ slug: tag }).populate({
+			path: "news",
+			select: "title body author status createdAt",
+		});
+
+		return news;
 	};
 
 	return {
@@ -112,6 +124,7 @@ function newsRepositoryMongoDB() {
 		deleteByID,
 		updateByID,
 		findByStatus,
+		findByTag,
 	};
 }
 

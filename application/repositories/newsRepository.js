@@ -4,7 +4,8 @@ function newsRepository(repository) {
 	const addNews = (news) => repository.add(news);
 	const deleteNewsByID = (id) => repository.deleteByID(id);
 	const updateNewsByID = (id, news) => repository.updateByID(id, news);
-	const findNewsByStatus = (id) => repository.findByStatus(id);
+	const findNewsByStatus = (status) => repository.findByStatus(status);
+	const findNewsByTag = (tag) => repository.findByTag(tag);
 
 	return {
 		findAllNews,
@@ -13,6 +14,7 @@ function newsRepository(repository) {
 		deleteNewsByID,
 		updateNewsByID,
 		findNewsByStatus,
+		findNewsByTag,
 	};
 }
 

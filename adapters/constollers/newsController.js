@@ -13,6 +13,9 @@ const {
 const {
 	findNewsByStatus,
 } = require("../../application/use_cases/news/findNewsByStatus");
+const {
+	findNewsByTag,
+} = require("../../application/use_cases/news/findByNewsTag");
 
 function newsController(newsDBRepository, newsDBRepositoryImpl) {
 	const dbRepository = newsDBRepository(newsDBRepositoryImpl());
@@ -25,12 +28,25 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 				if (news.length === 0) {
 					responseFormatter(res, 404, "failed", "News not found", null);
 				}
-				
+
 				responseFormatter(
 					res,
 					200,
 					"success",
 					"News by status fetched successfully",
+					news
+				);
+			} else if (tag) {
+				const news = await findNewsByTag(tag, dbRepository);
+				if (news.length === 0) {
+					responseFormatter(res, 404, "failed", "News not found", null);
+				}
+
+				responseFormatter(
+					res,
+					200,
+					"success",
+					"News by tag fetched successfully",
 					news
 				);
 			}
