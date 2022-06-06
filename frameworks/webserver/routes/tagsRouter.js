@@ -15,6 +15,7 @@ function tagsRouter(express) {
 
 	tagsRouter.route("/").get(controller.getAllTags);
 	tagsRouter.route("/:id").get(controller.getTagByID);
+	tagsRouter.route("/details/:slug").get(controller.getTagBySlug);
 
 	return tagsRouter;
 }

@@ -18,9 +18,16 @@ function tagsRepositoryMongoDB() {
 		});
 	};
 
+	const findBySlug = (slug) => {
+		return Tags.findOne({ slug })
+			.select("news name")
+			.populate({ path: "news", select: "-__v -tags" });
+	};
+
 	return {
 		findAll,
 		findByID,
+		findBySlug,
 	};
 }
 

@@ -1,5 +1,8 @@
 const { findAllTags } = require("../../application/use_cases/tags/findAllTags");
 const { findTagByID } = require("../../application/use_cases/tags/findTagByID");
+const {
+	findTagBySlug,
+} = require("../../application/use_cases/tags/findTagBySlug");
 const { responseFormatter } = require("../formatter/responseFormatter");
 
 function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
@@ -28,9 +31,24 @@ function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
 		}
 	};
 
+	const getTagBySlug = async (req, res) => {
+		const { slug } = req.params;
+		try {
+			const tag = await findTagBySlug(slug, dbRepository);
+			if (!tag) {
+				responseFormatter(res, 404, "failed", "Tag not found", null);
+			}
+			responseFormatter(res, 200, "success", "Tag fetched successfully", tag);
+		} catch (error) {
+			console.log(error);
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
 	return {
 		getAllTags,
 		getTagByID,
+		getTagBySlug,
 	};
 }
 
