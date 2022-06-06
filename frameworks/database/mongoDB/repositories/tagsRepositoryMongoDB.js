@@ -24,10 +24,30 @@ function tagsRepositoryMongoDB() {
 			.populate({ path: "news", select: "-__v -tags" });
 	};
 
+	const add = (tagsEntity) => {
+		const newTag = new Tags({ name: tagsEntity.getName() });
+
+		return newTag.save();
+	};
+
+	const update = (id, tagsEntity) => {
+		const updatedTag = {
+			name: tagsEntity.getName(),
+		};
+
+		updatedTag.slug = updatedTag.name.replace(/\s+/g, "-").toLowerCase();
+
+		return Tags.findByIdAndUpdate(id, updatedTag, {
+			new: true,
+		});
+	};
+
 	return {
 		findAll,
 		findByID,
 		findBySlug,
+		add,
+		update,
 	};
 }
 

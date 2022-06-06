@@ -1,8 +1,10 @@
+const { addTag } = require("../../application/use_cases/tags/addTag");
 const { findAllTags } = require("../../application/use_cases/tags/findAllTags");
 const { findTagByID } = require("../../application/use_cases/tags/findTagByID");
 const {
 	findTagBySlug,
 } = require("../../application/use_cases/tags/findTagBySlug");
+const { updateTagByID } = require("../../application/use_cases/tags/updateTagByID");
 const { responseFormatter } = require("../formatter/responseFormatter");
 
 function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
@@ -45,10 +47,52 @@ function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
 		}
 	};
 
+	const storeTag = async (req, res) => {
+		const { name } = req.body;
+		try {
+			const newTags = await addTag({
+				name,
+				tagsRepository: dbRepository,
+			});
+			responseFormatter(
+				res,
+				201,
+				"success",
+				"Tag created successfully",
+				newTags
+			);
+		} catch (error) {
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
+	const updateTag = async (req, res) => {
+		const { name } = req.body;
+		const { id } = req.params;
+		try {
+			const updatedTag = await updateTagByID({
+				id,
+				name,
+				tagsRepository: dbRepository,
+			});
+			responseFormatter(
+				res,
+				200,
+				"success",
+				"Tag updated successfully",
+				updatedTag
+			);
+		} catch (error) {
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
 	return {
 		getAllTags,
 		getTagByID,
 		getTagBySlug,
+		storeTag,
+		updateTag,
 	};
 }
 
