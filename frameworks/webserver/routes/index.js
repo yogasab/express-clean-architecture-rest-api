@@ -3,7 +3,7 @@ const { tagsRouter } = require("./tagsRouter");
 
 function routes(app, express, redis) {
 	app.use("/api/v1/news", newsRouter(express, redis));
-	app.use("/api/v1/tags", tagsRouter(express));
+	app.use("/api/v1/tags", tagsRouter(express, redis));
 }
 
 module.exports = { routes };

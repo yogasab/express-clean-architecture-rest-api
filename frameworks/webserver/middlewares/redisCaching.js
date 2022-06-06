@@ -1,4 +1,6 @@
-const { responseFormatter } = require("../../../adapters/formatter/responseFormatter");
+const {
+	responseFormatter,
+} = require("../../../adapters/formatter/responseFormatter");
 
 function redisCaching(key, redis) {
 	return function (req, res, next) {
@@ -33,7 +35,7 @@ function redisCaching(key, redis) {
 					res,
 					200,
 					"success",
-					"Data fetched successfully",
+					"Data from redis fetched successfully",
 					JSON.parse(data)
 				);
 			}

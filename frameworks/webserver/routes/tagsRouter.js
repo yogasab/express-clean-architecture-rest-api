@@ -7,19 +7,36 @@ const {
 const {
 	tagsRepositoryMongoDB,
 } = require("../../database/mongoDB/repositories/tagsRepositoryMongoDB");
+const {
+	redisRepository,
+} = require("../../../application/repositories/redisRepository");
+const { RedisRepository } = require("../../database/redis/redisRepository");
+const { checkValidID } = require("../middlewares/checkValidID");
+const { redisCaching } = require("../middlewares/redisCaching");
 
-function tagsRouter(express) {
+function tagsRouter(express, redis) {
 	const tagsRouter = express.Router();
 
-	const controller = tagsController(tagsRepository, tagsRepositoryMongoDB);
+	const controller = tagsController(
+		tagsRepository,
+		tagsRepositoryMongoDB,
+		redis,
+		redisRepository,
+		RedisRepository
+	);
 
-	tagsRouter.route("/").get(controller.getAllTags).post(controller.storeTag);
+	tagsRouter
+		.route("/")
+		.get(redisCaching(`tags`, redis), controller.getAllTags)
+		.post(controller.storeTag);
 	tagsRouter
 		.route("/:id")
-		.get(controller.getTagByID)
-		.put(controller.updateTag)
-		.delete(controller.removeTagByID);
-	tagsRouter.route("/details/:slug").get(controller.getTagBySlug);
+		.get(checkValidID(), redisCaching(`tags`, redis), controller.getTagByID)
+		.put(checkValidID(), controller.updateTag)
+		.delete(checkValidID(), controller.removeTagByID);
+	tagsRouter
+		.route("/details/:slug")
+		.get(redisCaching(`tags`, redis), controller.getTagBySlug);
 
 	return tagsRouter;
 }
