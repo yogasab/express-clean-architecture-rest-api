@@ -39,4 +39,4 @@ routes(app, express, redisClient);
 // app.use(errorHandlingMiddleware);
 
 // Expose app
-module.exports = { app };
+module.exports = app;

@@ -2,7 +2,10 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const expect = chai.expect;
 const app = require("../../app");
-const Tags = require("../../app/models/tags.models");
+const { Tags } = require("../../frameworks/database/mongoDB/models/tags");
+
+chai.use(chaiHttp);
+
 describe("Test Tags Endpoint", () => {
 	describe("/GET tags", () => {
 		it("it should GET all the tags", (done) => {
@@ -18,10 +21,9 @@ describe("Test Tags Endpoint", () => {
 					expect(res.body).to.have.property("status");
 					expect(res.body.status).to.equal("success");
 					expect(res.body).to.have.property("message");
-					expect(res.body.message).to.equal("Data fetched successfully");
+					expect(res.body.message).to.have.an("string");
 					expect(res.body).to.have.property("data");
-					expect(res.body.data).to.have.key("tags");
-					expect(res.body.data.tags).to.have.an("array");
+					expect(res.body.data).to.have.an("array");
 					done();
 				});
 		});
@@ -45,10 +47,9 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body).to.have.property("status");
 						expect(res.body.status).to.equal("success");
 						expect(res.body).to.have.property("message");
-						expect(res.body.message).to.equal("Tags fetched successfully");
+						expect(res.body.message).to.have.an("string");
 						expect(res.body).to.have.property("data");
-						expect(res.body.data).to.have.key("tag");
-						expect(res.body.data.tag).to.have.an("object");
+						expect(res.body.data).to.have.an("object");
 						done();
 					});
 			});
@@ -73,13 +74,11 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body).to.have.property("status");
 						expect(res.body.status).to.equal("success");
 						expect(res.body).to.have.property("message");
-						expect(res.body.message).to.equal("Data fetched successfully");
+						expect(res.body.message).to.be.an("String");
 						expect(res.body).to.have.property("data");
 						expect(res.body.data).to.be.an("Object");
-						expect(res.body.data).to.have.property("tag");
-						expect(res.body.data.tag).to.be.an("Object");
-						expect(res.body.data.tag.slug).to.be.an("String");
-						expect(res.body.data.tag.slug).to.equal(newTag.slug);
+						expect(res.body.data.slug).to.be.an("String");
+						expect(res.body.data.slug).to.equal(newTag.slug);
 						done();
 					});
 			});
@@ -108,8 +107,7 @@ describe("Test Tags Endpoint", () => {
 					expect(res.body.message).to.equal("Tag created successfully");
 					expect(res.body).to.have.property("data");
 					expect(res.body.data).to.be.an("object");
-					expect(res.body.data.newTag).to.be.an("object");
-					expect(res.body.data.newTag).to.have.all.keys(
+					expect(res.body.data).to.have.all.keys(
 						"name",
 						"news",
 						"slug",
@@ -177,8 +175,8 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body.message).to.be.a("string");
 						expect(res.body.message).to.equal("Tag updated successfully");
 						expect(res.body).to.have.property("data");
-						expect(res.body.data).to.have.property("updatedTag");
-						expect(res.body.data.updatedTag.name).to.equal("New Tag Updated");
+            expect(res.body.data).to.be.a("object");
+						expect(res.body.data.name).to.equal("New Tag Updated");
 						done();
 					});
 			});

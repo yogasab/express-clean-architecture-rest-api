@@ -20,7 +20,7 @@ function tagsRepositoryMongoDB() {
 
 	const findBySlug = (slug) => {
 		return Tags.findOne({ slug })
-			.select("news name")
+			.select("news name slug")
 			.populate({ path: "news", select: "-__v -tags" });
 	};
 
