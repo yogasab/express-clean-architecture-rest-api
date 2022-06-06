@@ -11,8 +11,16 @@ function tagsRepositoryMongoDB() {
 			.select("-__v -updatedAt");
 	};
 
+	const findByID = (id) => {
+		return Tags.findById(id).populate({
+			path: "news",
+			select: "title body author",
+		});
+	};
+
 	return {
 		findAll,
+		findByID,
 	};
 }
 

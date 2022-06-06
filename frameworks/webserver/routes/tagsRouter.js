@@ -14,6 +14,7 @@ function tagsRouter(express) {
 	const controller = tagsController(tagsRepository, tagsRepositoryMongoDB);
 
 	tagsRouter.route("/").get(controller.getAllTags);
+	tagsRouter.route("/:id").get(controller.getTagByID);
 
 	return tagsRouter;
 }
