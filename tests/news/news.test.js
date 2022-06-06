@@ -73,7 +73,6 @@ describe("Test News Endpoint", () => {
 					expect(res.body).to.have.property("message");
 					expect(res.body.message).to.have.an("string");
 					expect(res.body).to.have.property("data");
-					expect(res.body.data).to.have.an("array");
 					done();
 				});
 		});

@@ -23,7 +23,6 @@ describe("Test Tags Endpoint", () => {
 					expect(res.body).to.have.property("message");
 					expect(res.body.message).to.have.an("string");
 					expect(res.body).to.have.property("data");
-					expect(res.body.data).to.have.an("array");
 					done();
 				});
 		});
@@ -175,7 +174,7 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body.message).to.be.a("string");
 						expect(res.body.message).to.equal("Tag updated successfully");
 						expect(res.body).to.have.property("data");
-            expect(res.body.data).to.be.a("object");
+						expect(res.body.data).to.be.a("object");
 						expect(res.body.data.name).to.equal("New Tag Updated");
 						done();
 					});
