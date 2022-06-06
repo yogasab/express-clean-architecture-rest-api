@@ -42,12 +42,28 @@ function tagsRepositoryMongoDB() {
 		});
 	};
 
+	const remove = async (id) => {
+		const tag = await Tags.findById(id);
+
+		if (tag.news.length > 0) {
+			tag.news.forEach(async (news) => {
+				const newsID = news;
+				await News.findByIdAndUpdate(newsID, {
+					$pull: { tags: id },
+				});
+			});
+		}
+
+		return await tag.delete();
+	};
+
 	return {
 		findAll,
 		findByID,
 		findBySlug,
 		add,
 		update,
+		remove,
 	};
 }
 

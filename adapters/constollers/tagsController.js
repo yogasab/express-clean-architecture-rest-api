@@ -1,10 +1,15 @@
 const { addTag } = require("../../application/use_cases/tags/addTag");
+const {
+	deleteTagByID,
+} = require("../../application/use_cases/tags/deleteTagByID");
 const { findAllTags } = require("../../application/use_cases/tags/findAllTags");
 const { findTagByID } = require("../../application/use_cases/tags/findTagByID");
 const {
 	findTagBySlug,
 } = require("../../application/use_cases/tags/findTagBySlug");
-const { updateTagByID } = require("../../application/use_cases/tags/updateTagByID");
+const {
+	updateTagByID,
+} = require("../../application/use_cases/tags/updateTagByID");
 const { responseFormatter } = require("../formatter/responseFormatter");
 
 function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
@@ -87,12 +92,26 @@ function tagsController(tagsDBRepository, tagsDBRepositoryImpl) {
 		}
 	};
 
+	const removeTagByID = async (req, res) => {
+		const { id } = req.params;
+		try {
+			const tag = await deleteTagByID(id, dbRepository);
+			if (!tag) {
+				responseFormatter(res, 404, "failed", "Tag not found", null);
+			}
+			responseFormatter(res, 200, "success", "Tag deleted successfully", null);
+		} catch (error) {
+			responseFormatter(res, 500, "error", error.message, null);
+		}
+	};
+
 	return {
 		getAllTags,
 		getTagByID,
 		getTagBySlug,
 		storeTag,
 		updateTag,
+		removeTagByID,
 	};
 }
 

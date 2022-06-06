@@ -4,6 +4,7 @@ function tagsRepository(repository) {
 	const findTagBySlug = (slug) => repository.findBySlug(slug);
 	const addTag = (tag) => repository.add(tag);
 	const updateTagByID = (id, updatedTag) => repository.update(id, updatedTag);
+	const deleteTagByID = (id) => repository.remove(id);
 
 	return {
 		findAllTags,
@@ -11,6 +12,7 @@ function tagsRepository(repository) {
 		findTagBySlug,
 		addTag,
 		updateTagByID,
+		deleteTagByID,
 	};
 }
 

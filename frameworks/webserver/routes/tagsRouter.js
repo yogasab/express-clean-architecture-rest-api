@@ -14,7 +14,11 @@ function tagsRouter(express) {
 	const controller = tagsController(tagsRepository, tagsRepositoryMongoDB);
 
 	tagsRouter.route("/").get(controller.getAllTags).post(controller.storeTag);
-	tagsRouter.route("/:id").get(controller.getTagByID).put(controller.updateTag);
+	tagsRouter
+		.route("/:id")
+		.get(controller.getTagByID)
+		.put(controller.updateTag)
+		.delete(controller.removeTagByID);
 	tagsRouter.route("/details/:slug").get(controller.getTagBySlug);
 
 	return tagsRouter;
