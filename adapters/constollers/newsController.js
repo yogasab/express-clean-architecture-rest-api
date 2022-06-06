@@ -17,8 +17,17 @@ const {
 	findNewsByTag,
 } = require("../../application/use_cases/news/findByNewsTag");
 
-function newsController(newsDBRepository, newsDBRepositoryImpl) {
+function newsController(
+	newsDBRepository,
+	newsDBRepositoryImpl,
+	cachingClient,
+	redisCachingRepository,
+	redisCachingRepositoryImpl
+) {
 	const dbRepository = newsDBRepository(newsDBRepositoryImpl());
+	const redisRepository = redisCachingRepository(
+		redisCachingRepositoryImpl()(cachingClient)
+	);
 
 	const getAllNews = async (req, res) => {
 		const { status, tag } = req.query;
@@ -29,6 +38,7 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 					responseFormatter(res, 404, "failed", "News not found", null);
 				}
 
+				redisRepository.setCache(`news_${status}`, JSON.stringify(news));
 				responseFormatter(
 					res,
 					200,
@@ -42,6 +52,7 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 					responseFormatter(res, 404, "failed", "News not found", null);
 				}
 
+				redisRepository.setCache(`news_${tag}`, JSON.stringify(news));
 				responseFormatter(
 					res,
 					200,
@@ -50,7 +61,9 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 					news
 				);
 			}
+
 			const news = await findAllNews(dbRepository);
+			redisRepository.setCache(`news_`, JSON.stringify(news));
 			responseFormatter(res, 200, "success", "News fetched successfully", news);
 		} catch (error) {
 			responseFormatter(res, 500, "error", error.message, null);
@@ -64,8 +77,10 @@ function newsController(newsDBRepository, newsDBRepositoryImpl) {
 			if (!news) {
 				responseFormatter(res, 404, "failed", "News not found", null);
 			}
+			redisRepository.setCache(`news_${id}`, JSON.stringify(news));
 			responseFormatter(res, 200, "success", "News fetched successfully", news);
 		} catch (error) {
+			console.log(error);
 			responseFormatter(res, 500, "error", error.message, null);
 		}
 	};
