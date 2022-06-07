@@ -7,8 +7,11 @@ const { Tags } = require("../../frameworks/database/mongoDB/models/tags");
 chai.use(chaiHttp);
 
 describe("Test Tags Endpoint", () => {
-	describe("/GET tags", () => {
-		it("it should GET all the tags", (done) => {
+	let newTags = new Tags({
+		name: "New Tag",
+	});
+	describe("/GET tags from the database", () => {
+		it("it should GET all the tags from the database", (done) => {
 			chai
 				.request(app)
 				.get("/api/v1/tags")
@@ -22,21 +25,41 @@ describe("Test Tags Endpoint", () => {
 					expect(res.body.status).to.equal("success");
 					expect(res.body).to.have.property("message");
 					expect(res.body.message).to.have.an("string");
+					expect(res.body.message).to.equal("Tags fetched successfully");
 					expect(res.body).to.have.property("data");
 					done();
 				});
 		});
 	});
-	describe("/GET tags details", () => {
-		it("it should GET tags details by id", (done) => {
-			let tags = new Tags({
-				name: "New Tag",
-			});
-
-			tags.save((err, tags) => {
+	describe("/GET tags from redis", () => {
+		it("it should GET all the tags from redis", (done) => {
+			chai
+				.request(app)
+				.get("/api/v1/tags")
+				.end((err, res) => {
+					expect(err).to.be.null;
+					expect(res).to.have.status(200);
+					expect(res.body).to.be.an("Object");
+					expect(res.body).to.have.property("code");
+					expect(res.body.code).to.equal(200);
+					expect(res.body).to.have.property("status");
+					expect(res.body.status).to.equal("success");
+					expect(res.body).to.have.property("message");
+					expect(res.body.message).to.have.an("string");
+					expect(res.body.message).to.equal(
+						"Data from redis fetched successfully"
+					);
+					expect(res.body).to.have.property("data");
+					done();
+				});
+		});
+	});
+	describe("/GET tags details from the database", () => {
+		it("it should GET tags details by id from the database", (done) => {
+			newTags.save((err, newTags) => {
 				chai
 					.request(app)
-					.get("/api/v1/tags/" + tags.id)
+					.get("/api/v1/tags/" + newTags.id)
 					.end((err, res) => {
 						expect(err).to.be.null;
 						expect(res).to.have.status(200);
@@ -47,6 +70,7 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body.status).to.equal("success");
 						expect(res.body).to.have.property("message");
 						expect(res.body.message).to.have.an("string");
+						expect(res.body.message).to.equal("Tag fetched successfully");
 						expect(res.body).to.have.property("data");
 						expect(res.body.data).to.have.an("object");
 						done();
@@ -54,16 +78,38 @@ describe("Test Tags Endpoint", () => {
 			});
 		});
 	});
-	describe("/GET tags details by slug", function () {
-		it("It should get tag details by slug", (done) => {
-			let newTag = new Tags({
-				name: "New Tag",
-			});
-
-			newTag.save((err, newTag) => {
+	describe("/GET tags details from redis", () => {
+		it("it should GET tags details by id from redis", (done) => {
+			newTags.save((err, newTags) => {
 				chai
 					.request(app)
-					.get("/api/v1/tags/details/" + newTag.slug)
+					.get("/api/v1/tags/" + newTags.id)
+					.end((err, res) => {
+						expect(err).to.be.null;
+						expect(res).to.have.status(200);
+						expect(res.body).to.be.an("Object");
+						expect(res.body).to.have.property("code");
+						expect(res.body.code).to.equal(200);
+						expect(res.body).to.have.property("status");
+						expect(res.body.status).to.equal("success");
+						expect(res.body).to.have.property("message");
+						expect(res.body.message).to.have.an("string");
+						expect(res.body.message).to.equal(
+							"Data from redis fetched successfully"
+						);
+						expect(res.body).to.have.property("data");
+						expect(res.body.data).to.have.an("object");
+						done();
+					});
+			});
+		});
+	});
+	describe("/GET tags details by slug from the database", function () {
+		it("It should get tag details by slug from the database", (done) => {
+			newTags.save((err, newTags) => {
+				chai
+					.request(app)
+					.get("/api/v1/tags/details/" + newTags.slug)
 					.end((err, res) => {
 						expect(err).to.be.null;
 						expect(res).to.have.status(200);
@@ -74,10 +120,39 @@ describe("Test Tags Endpoint", () => {
 						expect(res.body.status).to.equal("success");
 						expect(res.body).to.have.property("message");
 						expect(res.body.message).to.be.an("String");
+						expect(res.body.message).to.equal("Tag fetched successfully");
 						expect(res.body).to.have.property("data");
 						expect(res.body.data).to.be.an("Object");
 						expect(res.body.data.slug).to.be.an("String");
-						expect(res.body.data.slug).to.equal(newTag.slug);
+						expect(res.body.data.slug).to.equal(newTags.slug);
+						done();
+					});
+			});
+		});
+	});
+	describe("/GET tags details by slug from redis", function () {
+		it("It should get tag details by slug from redis", (done) => {
+			newTags.save((err, newTags) => {
+				chai
+					.request(app)
+					.get("/api/v1/tags/details/" + newTags.slug)
+					.end((err, res) => {
+						expect(err).to.be.null;
+						expect(res).to.have.status(200);
+						expect(res.body).to.be.an("Object");
+						expect(res.body).to.have.property("code");
+						expect(res.body.code).to.equal(200);
+						expect(res.body).to.have.property("status");
+						expect(res.body.status).to.equal("success");
+						expect(res.body).to.have.property("message");
+						expect(res.body.message).to.be.an("String");
+						expect(res.body.message).to.equal(
+							"Data from redis fetched successfully"
+						);
+						expect(res.body).to.have.property("data");
+						expect(res.body.data).to.be.an("Object");
+						expect(res.body.data.slug).to.be.an("String");
+						expect(res.body.data.slug).to.equal(newTags.slug);
 						done();
 					});
 			});
